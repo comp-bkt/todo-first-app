@@ -67,7 +67,7 @@ public class TodoActivity extends AppCompatActivity {
             }
         });
 
-        /** TODO setup previous button object and listener
+        /* TODO setup previous button object and listener
         *   to cycle through mTodos */
 
     }
