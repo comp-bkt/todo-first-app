@@ -38,8 +38,7 @@ class TodoActivity : AppCompatActivity() {
 
         /* setup navigation buttons */
         /* next button to cycle through mTodos */
-        val buttonNext: Button
-        buttonNext = findViewById<View>(R.id.buttonNext) as Button
+        val buttonNext: Button = findViewById(R.id.buttonNext)
 
         /* OnClick listener for the  Next button */
         buttonNext.setOnClickListener { //check index boundary for mTodos
