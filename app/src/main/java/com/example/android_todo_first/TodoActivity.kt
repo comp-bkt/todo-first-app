@@ -1,82 +1,95 @@
 package com.example.android_todo_first
 
-import androidx.appcompat.app.AppCompatActivity
-import android.widget.TextView
 import android.os.Bundle
-import android.view.View
-import android.widget.Button
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.android_todo_first.ui.theme.TodoTheme
 
-class TodoActivity : AppCompatActivity() {
-    private lateinit var mTodos: Array<String>
-    private var mTodoIndex = 0
-    private lateinit var todoTextView: TextView
+class TodoActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
-        /* check for saved state due to changes such as rotation
-            and restore any saved state such as the TODO_INDEX */
-        if (savedInstanceState != null) {
-            mTodoIndex = savedInstanceState.getInt(TODO_INDEX, 0)
-        }
+        super.onCreate(savedInstanceState)
 
-        /* call the super class onCreate to complete the creation
-            of activity with  any state changes */super.onCreate(savedInstanceState)
-
-        /*  Refactor model
-            read into mTodos array from res/values/strings.xml */
-        val res = resources
-        mTodos = res.getStringArray(R.array.todos)
-
-        /* set the user interface layout for this Activity */
-        setContentView(R.layout.activity_todo)
-
-        /* initialize member TextView so we can manipulate it later */
-        todoTextView = findViewById<View>(R.id.textViewTodo) as TextView
-
-        /* display the first task from mTodo array in the TodoTextView */
-        todoTextView.text = mTodos[mTodoIndex]
-
-        /* setup navigation buttons */
-        /* next button to cycle through mTodos */
-        val buttonNext: Button = findViewById(R.id.buttonNext)
-
-        /* OnClick listener for the  Next button */
-        buttonNext.setOnClickListener { //check index boundary for mTodos
-            if (mTodoIndex < mTodos.size - 1) {
-                mTodoIndex += 1
-            } else {
-                mTodoIndex = 0
+        setContent {
+            TodoTheme {
+                // A surface container using the 'background' color from the theme
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    TodoWithButtons(LocalContext.current.resources.getStringArray(R.array.todos))
+                }
             }
-
-
-            //   mTodoIndex += 1;
-            todoTextView.text = mTodos[mTodoIndex]
         }
-
-        /* TODO setup previous button object and listener
-        *   to cycle through mTodos */
-    }
-
-    /*
-    This callback is called only when there is a saved instance that is previously saved by using
-    onSaveInstanceState(). We restore some state in onCreate(), while we can optionally restore
-    other state here, possibly usable after onStart() has completed.
-    The savedInstanceState Bundle is same as the one used in onCreate(). */
-    public override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        mTodoIndex = savedInstanceState.getInt(TODO_INDEX)
-        todoTextView.text = mTodos[mTodoIndex]
-    }
-
-    /* invoked when the activity may be temporarily destroyed, save the instance state here */
-    public override fun onSaveInstanceState(savedInstanceState: Bundle) {
-        savedInstanceState.putInt(TODO_INDEX, mTodoIndex)
-        // call superclass to save any view hierarchy
-        super.onSaveInstanceState(savedInstanceState)
-    }
-
-    companion object {
-        /* In case of state change, such as rotating the phone,
-       store the mTodoIndex */
-        private const val TODO_INDEX = "com.example.android_todo_first.todoIndex"
     }
 }
+
+@Composable
+fun TodoWithButtons(todos:Array<String> , modifier: Modifier = Modifier) {
+    var stringIndex by rememberSaveable { mutableStateOf(0) }
+    Column(modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally)
+    {
+        Text(
+            text = "${todos[stringIndex]}!"
+        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Button(onClick = { stringIndex = onPrevButton(stringIndex, todos.size) }) {
+                Text(stringResource(R.string.prev))
+            }
+
+            Button(onClick = { stringIndex = onNextButton(stringIndex, todos.size) }) {
+                Text(stringResource(R.string.next))
+            }
+        }
+    }
+}
+
+fun onPrevButton(index:Int, length:Int): Int {
+    return if (index > 0) {
+        index - 1
+    } else {
+        length - 1
+    }
+}
+
+
+fun onNextButton(index:Int, length:Int): Int {
+    return if (index < length - 1) {
+        index + 1
+    } else {
+        0
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TodosPreview() {
+    TodoTheme {
+       TodoWithButtons(LocalContext.current.resources.getStringArray(R.array.todos))
+    }
+}
+
