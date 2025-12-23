@@ -5,10 +5,11 @@ Jetpack Compose - this repository now contains 3 branches. The application does 
 albeit Compose may look different on the UI.
 
 All branches compile and target to Android 16 (SDK 36)
-Java 25 (LTS) is set as the JAVA Version - Gradle version is 8.14.3 
+Java 21 (LTS) is set as the JAVA Version - Gradle version is 8.14.3
+(Other branches use Java 25 - currently in Android Studio Otter, Compose previews are incompatible with Java 25)
 
 ### main branch
-* kotlin + compose
+* kotlin + compose 
 ### kotlin branch
 * kotlin (xml layout) - edge to edge switched off (the ability to switch off may be removed in later versions - refer to Google Developer Documentation)
 ### java branch
